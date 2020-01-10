@@ -1,11 +1,12 @@
 Name: 		perl-SOAP-Lite
 Version:	0.710.10
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	Client and server side SOAP implementation
 License:	GPL+ or Artistic
 Group:		Development/Libraries
 URL: 		http://search.cpan.org/dist/SOAP-Lite/
 Source0: 	http://search.cpan.org/CPAN/authors/id/M/MK/MKUTTER/SOAP-Lite-%{version}.tar.gz
+Patch0:         perl-SOAP-Lite-rt58538.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Requires:  	perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
@@ -39,6 +40,7 @@ client and server side.
 
 %prep
 %setup -q -n SOAP-Lite-%{version}
+%patch0 -p1
 
 %build
 %{__perl} Makefile.PL --noprompt INSTALLDIRS=vendor
@@ -73,6 +75,11 @@ make test
 %{_mandir}/man1/*
 
 %changelog
+* Tue Aug  7 2012 Marcela Mašláňová <mmaslano@redhat.com> - 0.710.10-3
+- if ENV(MOD_PERL) is defined, then standard read insted of sysread must
+  be used.
+- Resolves: rhbz#748376
+
 * Mon Jan 18 2010 Stepan Kasal <skasal@redhat.com> - 0.710.10-2
 - limit BR perl(FCGI) to Fedora
 
