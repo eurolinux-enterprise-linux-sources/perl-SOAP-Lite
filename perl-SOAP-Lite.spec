@@ -1,16 +1,20 @@
 Name: 		perl-SOAP-Lite
 Version:	0.710.10
-Release:	3%{?dist}
+Release:	4%{?dist}
 Summary:	Client and server side SOAP implementation
 License:	GPL+ or Artistic
 Group:		Development/Libraries
 URL: 		http://search.cpan.org/dist/SOAP-Lite/
 Source0: 	http://search.cpan.org/CPAN/authors/id/M/MK/MKUTTER/SOAP-Lite-%{version}.tar.gz
 Patch0:         perl-SOAP-Lite-rt58538.patch
+# Fix UTF-8 encoding in HTTP transport, bug #1070948, CPAN RT#52637
+Patch1:         SOAP-Lite-0.712-fix_utf8_encoding.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Requires:  	perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
+Requires:   perl(Encode)
 BuildRequires:	perl-XML-Parser
+BuildRequires:  perl(Encode)
 BuildRequires:  perl(ExtUtils::MakeMaker)
 BuildRequires:  perl(Test::MockObject)
 BuildRequires:  perl(Test::Pod)
@@ -41,6 +45,7 @@ client and server side.
 %prep
 %setup -q -n SOAP-Lite-%{version}
 %patch0 -p1
+%patch1 -p0
 
 %build
 %{__perl} Makefile.PL --noprompt INSTALLDIRS=vendor
@@ -75,6 +80,9 @@ make test
 %{_mandir}/man1/*
 
 %changelog
+* Tue Sep 13 2016 Petr Pisar <ppisar@redhat.com> - 0.710.10-4
+- Fix UTF-8 encoding in HTTP transport (bug #1070948)
+
 * Tue Aug  7 2012 Marcela Mašláňová <mmaslano@redhat.com> - 0.710.10-3
 - if ENV(MOD_PERL) is defined, then standard read insted of sysread must
   be used.
